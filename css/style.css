@@ -1,0 +1,8 @@
+.states {
+  stroke: chocolate;
+  fill: chocolate;
+  fill-opacity: .7;
+}
+.states:hover {
+  fill: olive;
+}
