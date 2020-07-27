@@ -1,3 +1,6 @@
+svg {
+  border-style: solid;
+}
 .states {
   stroke: chocolate;
   fill: chocolate;
@@ -5,4 +8,5 @@
 }
 .states:hover {
   fill: olive;
+  opacity: 0.9;
 }
