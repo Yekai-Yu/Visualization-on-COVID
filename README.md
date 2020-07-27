@@ -16,4 +16,4 @@ Here are some ideas to get you started:
 -->
 
 
-https://yyk-test.github.io/yyk-test/
+https://yyk-test.github.io/
