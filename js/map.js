@@ -1,8 +1,8 @@
 const us = d3.json('https://unpkg.com/us-atlas@1/us/10m.json');
 const covid = d3.csv('../data/time_series_covid19_confirmed_US.csv');
 
-const width = 1920;
-const height = 1080;
+const width = 1000;
+const height = 700;
 const svg = d3.select("svg")
               .attr("width", width)
               .attr("height", height);
@@ -11,6 +11,7 @@ const projection = d3.geoAlbersUsa().translate([480, 300]).scale(1280);
 const path = d3.geoPath();
 const startDate = new Date("1/22/2020");
 const endDate = new Date("7/22/2020");
+var globleData = [];
 
 const mapping = {
         "01" : "Alabama",
@@ -112,20 +113,16 @@ var tooltip = d3.select("body")
                 	.append("div")
                   .attr("class", "tooltip")
                   .style("opacity", 0);
-                	// .style("position", "absolute")
-                	// .style("z-index", "10")
-                	// .style("visibility", "hidden")
-                  // .style("font-size", "16pt")
-                  // .style("border", "solid");
+
+var logScale = d3.scaleLog().domain([0.1,20695922]).range([1,13]);
 
 Promise.all([us, covid])
   .then(function (values) {
     var map = values[0];
     var covidData = values[1];
-    console.log(covidData);
+    // console.log(covidData);
+    globleData = covidData;
     var stateFeatures = topojson.feature(map, map.objects.states).features;
-    var logScale = d3.scaleLog().domain([0.1,20695922]).range([1,13]);
-
     // map
     svg.append("g").selectAll("states")
         .data(stateFeatures)
@@ -151,7 +148,6 @@ Promise.all([us, covid])
                 .style('fill-opacity', .7);
             tooltip.style("visibility", "hidden");
         });
-
     // circle
     svg.append("g").attr("pointer-events", "none").selectAll("circle")
         .data(covidData.filter(coordinate => projection([coordinate.Lon, coordinate.Lat]) !== null))
@@ -166,31 +162,40 @@ Promise.all([us, covid])
           .transition().duration(3000)
           .style("fill-opacity", 0.13)
           .style("stoke-opacity", 0.9);
-
-    svg.append("input")
-				.attr("id", "currSelectedDate")
-				.on("input", function input() {
-					drawCircles();
-				});
   });
 
+// slider
+d3.select("body")
+    .append("div").append("input")
+      .attr("type", "range")
+      .attr("min", 0)
+      .attr("max", allDate.length - 1)
+      .attr("value", allDate.length - 1)
+      .attr("step", "1")
+      .attr("id", "currSelectedDate")
+      .on("input", function input() {
+        drawCircles();
+      });
+
 function drawCircles() {
-  var currDate = document.getElementById("currSelectedDate").value;
+  svg.selectAll("circle").remove();
+  var sliderInput = document.getElementById("currSelectedDate");
+  var output = document.getElementById("currDate");
+  var currDate = allDate[sliderInput.value];
+  output.innerHTML = currDate;
+  sliderInput.oninput = function() {
+    output.innerHTML = currDate;
+  }
   var join = svg.append("g").attr("pointer-events", "none").selectAll("circle")
-      .data(covidData.filter(coordinate => projection([coordinate.Lon, coordinate.Lat]) !== null))
-  var enter = join.enter()
-  var exit = join.exit()
+      .data(globleData.filter(coordinate => projection([coordinate.Lon, coordinate.Lat]) !== null));
+  var enter = join.enter();
 
-      enter.append("circle")
-        .attr("fill", "red")
-        .attr("r", function(d) {return logScale(Number(d[currDate]));})
-        .attr("cx", function(d) {return projection([d.Lon, d.Lat])[0];})
-        .attr("cy", function(d) {return projection([d.Lon, d.Lat])[1];})
-        .style("fill-opacity", 0)
-        .style("stoke-opacity", 0)
-        .transition().duration(1000)
-        .style("fill-opacity", 0.13)
-        .style("stoke-opacity", 0.9);
+  enter.append("circle")
+    .attr("fill", "yellow")
+    .attr("r", function(d) {return logScale(Number(d[currDate]));})
+    .attr("cx", function(d) {return projection([d.Lon, d.Lat])[0];})
+    .attr("cy", function(d) {return projection([d.Lon, d.Lat])[1];})
+    .style("fill-opacity", 0.2)
+    .style("stoke-opacity", 0.9);
 
-      exit.remove();
 };
