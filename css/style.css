@@ -1,5 +1,5 @@
 svg {
-  border-style: solid;
+  
 }
 .states {
   stroke: chocolate;
@@ -8,7 +8,7 @@ svg {
 }
 .states:hover {
   fill: yellow;
-  opacity: 0.8;
+  opacity: 0.7;
 }
 
 div.tooltip {
@@ -22,9 +22,13 @@ div.tooltip {
   pointer-events: none;
 }
 
+/*
+  slider
+*/
+
 #currSelectedDate {
   -webkit-appearance: none;  /* Override default CSS styles */
-  width: 50%; /* Full-width */
+  width: 1000px; /* Full-width */
   height: 25px; /* Specified height */
   background: #d3d3d3; /* Grey background */
   outline: none; /* Remove outline */
@@ -50,4 +54,16 @@ transition: opacity .2s;
 }
 #currDate {
   font-size: 16pt;
+}
+
+
+/*
+  state char
+*/
+.stateX {
+  font-size: 14pt;
+}
+
+.stateY {
+  font-size: 14pt;
 }
