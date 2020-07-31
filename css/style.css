@@ -1,5 +1,13 @@
 svg {
-  
+
+}
+
+#mapBlock {
+  padding-left: 2%;
+}
+
+#stateChartBlock {
+  padding-left: 2%;
 }
 .states {
   stroke: chocolate;
@@ -66,4 +74,13 @@ transition: opacity .2s;
 
 .stateY {
   font-size: 14pt;
+}
+
+
+/*
+  zoom
+*/
+.overlay {
+	fill: none;
+	pointer-events: all;
 }
