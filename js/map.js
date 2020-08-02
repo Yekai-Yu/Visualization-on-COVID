@@ -283,12 +283,12 @@ function drawStateChart(dailyData) {
 
   // add title to chart
   stateChartSVG.append("text")
-                .attr("x", width / 2)
+                .attr("x", xScale(new Date("4/1/2020")))
                 .attr("y", margin.top)
                 .text("COVID-19 confirmed case growth trend")
                 .style("font-size", "20px");
   stateChartSVG.append("text")
-                .attr("x", width / 2)
+                .attr("x", xScale(new Date("4/1/2020")))
                 .attr("y", margin.top * 2)
                 .text("[1/22/2020, 7/22/2020]")
                 .style("font-size", "14px");
