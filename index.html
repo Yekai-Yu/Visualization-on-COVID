@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
-    <title>COVID-19 Confirmed case trend in US</title>
+    <title>COVID-19 Confirmed case in US</title>
     <link href="../css/style.css" rel="stylesheet" />
     <script src="https://d3js.org/d3.v5.min.js"></script>
     <script src="https://unpkg.com/topojson@3"></script>
@@ -10,18 +10,22 @@
     <h1>
       COVID-19 Confirmed Cases Distribution in US
     </h1>
-    <div id="mapBlock">
-      <svg id="map"></svg>
-      <p id="currDateP">
-        Date Slider <span style="font-size: 12pt;">(drag to change date)</span>: <span id="currDate"></span>
-      </p>
+    <div id="row">
+      <div id="mapBlock">
+        <svg id="map"></svg>
+        <p id="currDateP">
+          Date Slider <span style="font-size: 12pt;">(drag to change date)</span>: <span id="currDate"></span>
+        </p>
+      </div>
+      <div id="stateChartBlock">
+        <svg id="stateChart"></svg>
+        <div id="oneStateChartBlock">
+          <h1 id="stateChartText">No Confirmed Case in <span id="stateText"></span></h1>
+          <h3 id="currState"></h3>
+          <svg id="oneStateChart"></svg>
+        </div>
+      </div>
     </div>
-    <div id="stateChartBlock">
-      <svg id="stateChart"></svg>
-      <h3 id="currState"></h3>
-      <svg id="oneStateChart"></svg>
-    </div>
-
 
     <script src="../js/map.js"></script>
   </body>

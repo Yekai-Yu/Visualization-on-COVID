@@ -87,8 +87,6 @@ Promise.all([us, covid, stateCodeMapping, dailyTotal])
           var sliderInput = document.getElementById("currSelectedDate");
           var dateSelection = allDate[sliderInput.value];
           currentState = mapping[d.id];
-          var stateDisplay = document.getElementById("currState");
-          stateDisplay.innerHTML = currentState;
           drawOneStateChart(currentState, dateSelection, covidData);
         });
     // circle
@@ -164,32 +162,46 @@ var barTooltip = d3.select("body")
 function drawOneStateChart(stateName, date, covidData) {
   console.log(stateName);
   console.log(date);
-  var margin = ({top: 20, right: 30, bottom: 30, left: 40});
+  var margin = ({top: 30, right: 30, bottom: 30, left: 30});
 
   var currDay = covidData.filter(d => d.State == stateName)
-                         .map(d => ({county: d.County, case: d[date]}));
+                         .map(d => ({county: d.County, case: d[date]}))
+                         .filter(d => d.case != 0);
   // console.log(currDay);
   // console.log(subsetData);
   // console.log(Math.max(...currDay.map(o => o.case)));
+  d3.select("#stateChart").style("display", "none");
+  d3.select("#oneStateChartBlock").style("display", "block");
   d3.select("#oneStateChart").remove();
-  var svg = d3.select("#stateChartBlock")
+  var maxCase = Math.max(...currDay.map(o => o.case));
+  var minCase = Math.min(...currDay.map(o => o.case));
+  if(maxCase == 0 || currDay.length == 0) {
+    d3.select("#currState").style("display", "none");
+    d3.select("#stateChartText").style("display", "block");
+    document.getElementById("stateText").innerHTML = stateName + ", " + date;
+    return;
+  }
+  d3.select("#currState").style("display", "block");
+  var stateDisplay = document.getElementById("currState");
+  stateDisplay.innerHTML = stateName + " " +  date;
+  d3.select("#stateChartText").style("display", "none");
+  var svg = d3.select("#oneStateChartBlock")
                 .append("svg")
                 .attr("id", "oneStateChart")
                 .attr("width", width)
-                .attr("height", height);
+                .attr("height", height + 2 * margin.top);
   var xScale = d3.scaleBand()
                   .domain(d3.range(currDay.length))
                   .range([margin.left, width - margin.right]);
   // console.log(xScale.bandwidth());
-  var maxCase = Math.max(...currDay.map(o => o.case));
-  var minCase = Math.min(...currDay.map(o => o.case));
+
   var yScale = d3.scaleLinear()
                   .domain([minCase, maxCase])
-                  .range([height - margin.bottom, margin.top]);
+                  .range([height, 0]);
   xScale.domain(currDay.map(function(d) { return d.county; }));
   var xAxis = svg.append("g")
                   .attr("class", "oneStateX")
-                  .attr("transform", `translate(0, ${height - margin.bottom})`)
+                  .attr("transform", `translate(0, ${height})`)
                   .call(d3.axisBottom(xScale).tickFormat(""));
   var yAxis = svg.append("g")
                   .attr("class", "oneStateY")
@@ -205,11 +217,13 @@ function drawOneStateChart(stateName, date, covidData) {
       .attr("y", function(d) { return yScale(0); })
       .attr("height", function(d) { return height - yScale(0); })
 
+  barChart.append("text")
+          .text("test");
 
   barChart
       .transition()
       .duration(1000)
-      .attr("y", function(d) { return yScale(d.case) - margin.bottom; })
+      .attr("y", function(d) { return yScale(d.case); })
       .attr("height", function(d) { return height - yScale(d.case); })
 
   barChart
@@ -233,41 +247,38 @@ function drawStateChart(dailyData) {
   * line chart
   */
   // chart to show state overview
-  var margin = ({top: 20, right: 30, bottom: 30, left: 40});
+  var margin = ({top: 30, right: 30, bottom: 30, left: 30});
 
   var stateChartSVG = d3.select("#stateChart")
-                          .attr("width", width)
-                          .attr("height", height);
+                          .attr("width", width + 2 * margin.left)
+                          .attr("height", height + margin.top);
   var xScale = d3.scaleTime()
                   .domain([startDate, endDate])
                   .range([margin.left, width - margin.right]);
-  // var xScale = d3.scaleOrdinal()
-  //                 .domain(allDate)
-  //                 .range([margin.left, width - margin.right]);
   var yScale = d3.scaleLog()
                   .domain([1, dailyData[dailyData.length - 1].cases]).nice()
-                  .range([height - margin.bottom, margin.top]);
+                  .range([height, margin.top]);
   var xAxis = stateChartSVG.append("g")
                             .attr("class", "stateX")
                             .attr("clip-path", "url(#clip)")
-                            .attr("transform", `translate(0,${height - margin.bottom})`)
+                            .attr("transform", `translate(${margin.left},${height})`)
                             .call(d3.axisBottom(xScale));
   // var xAxis = d3.axisBottom(xScale);
   var yAxis = stateChartSVG.append("g")
                             .attr("class", "stateY")
-                            .attr("transform", `translate(${margin.left},0)`)
+                            .attr("transform", `translate(${2*margin.left},0)`)
                             .call(d3.axisLeft(yScale).ticks(10, "~s"));
   // var yAxis = d3.axisLeft(yScale).ticks(10, "~s");
   var line = d3.line()
                 .x(function(d) { return xScale(new Date(d.date)); })
                 .y(function(d) { return yScale(d.cases); });
 
-  var defs = stateChartSVG.append("defs").append("clipPath")
-          .attr("id", "clip")
-          .append("rect")
-          .attr("width", width - margin.right )
-          .attr("height", height )
-          .attr("x", margin.left);
+  // var defs = stateChartSVG.append("defs").append("clipPath")
+  //         .attr("id", "clip")
+  //         .append("rect")
+  //         .attr("width", width - margin.right )
+  //         .attr("height", height )
+  //         .attr("x", margin.left);
 
   function transition(path) {
           path.transition()
@@ -284,6 +295,7 @@ function drawStateChart(dailyData) {
   };
 
   var path = stateChartSVG.append("path")
+                .attr("transform", `translate(${margin.left}, 0)`)
                 .datum(dailyData)
                 .attr("class", "stateLine")
                 .attr("fill", "none")
@@ -294,7 +306,7 @@ function drawStateChart(dailyData) {
                 .call(transition);
 
 // zoom
-  stateChartSVG.call(zoom);
+  // stateChartSVG.call(zoom);
 
   function zoom(svg) {
     var extent = [
