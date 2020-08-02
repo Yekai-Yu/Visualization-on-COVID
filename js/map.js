@@ -16,6 +16,7 @@ var stateCodeToName = {};
 var mapping = {};
 
 var globleData = [];
+var currentState;
 
 const startDate = new Date("1/22/2020");
 const endDate = new Date("7/22/2020");
@@ -85,7 +86,10 @@ Promise.all([us, covid, stateCodeMapping, dailyTotal])
         .on('click', function(d, i) {
           var sliderInput = document.getElementById("currSelectedDate");
           var dateSelection = allDate[sliderInput.value];
-          drawOneStateChart(mapping[d.id], dateSelection, covidData);
+          currentState = mapping[d.id];
+          var stateDisplay = document.getElementById("currState");
+          stateDisplay.innerHTML = currentState;
+          drawOneStateChart(currentState, dateSelection, covidData);
         });
     // circle
     svg.append("g").attr("pointer-events", "none").selectAll("circle")
@@ -116,6 +120,11 @@ d3.select("#mapBlock")
       .attr("id", "currSelectedDate")
       .on("input", function input() {
         drawCircles();
+        var sliderInput = document.getElementById("currSelectedDate");
+        var dateSelection = allDate[sliderInput.value];
+        if(typeof currentState !== 'undefined') {
+          drawOneStateChart(currentState, dateSelection, globleData);
+        }
       });
 
 var colorTimeScale = d3.scaleTime().domain([startDate, endDate]).range([1,0.2]);
@@ -147,6 +156,11 @@ function drawCircles() {
 /*
   plot each county of a selected state on a given date
 */
+var barTooltip = d3.select("body")
+                	.append("div")
+                  .attr("class", "tooltip")
+                  .style("opacity", 0);
+
 function drawOneStateChart(stateName, date, covidData) {
   console.log(stateName);
   console.log(date);
@@ -182,28 +196,36 @@ function drawOneStateChart(stateName, date, covidData) {
                   .attr("transform", `translate(${margin.left}, 0)`)
                   .call(d3.axisLeft(yScale).ticks(10, "~s"));
 
-  svg.selectAll("bar")
+  var barChart = svg.selectAll("bar")
       .data(currDay)
       .enter().append("rect")
       .style("fill", "steelblue")
       .attr("x", function(d) { return xScale(d.county); })
       .attr("width", xScale.bandwidth())
       .attr("y", function(d) { return yScale(0); })
-      .attr("height", function(d) { return height - yScale(0); });
+      .attr("height", function(d) { return height - yScale(0); })
 
-  svg.selectAll("rect")
+
+  barChart
       .transition()
       .duration(1000)
-      .attr("y", function(d) { return yScale(d.case); })
-      .attr("height", function(d) { return height - yScale(d.case); });
+      .attr("y", function(d) { return yScale(d.case) - margin.bottom; })
+      .attr("height", function(d) { return height - yScale(d.case); })
 
-  svg.append("text")
-        .attr("x", (width / 2))
-        .attr("y", 0 - (margin.top / 2))
-        .attr("text-anchor", "middle")
-        .style("font-size", "16px")
-        .style("text-decoration", "underline")
-        .text(stateName);
+  barChart
+      .on('mouseover', function(d) {
+        barTooltip.transition().duration(200)
+                .style("opacity", .9);
+        barTooltip.html(d.county + "</br>" + d.case);
+        barTooltip.style("visibility", "visible");
+      })
+      .on('mousemove', function(d) {
+        return barTooltip.style("top", (event.pageY-10)+"px").style("left",(event.pageX+10)+"px");
+      })
+      .on('mouseout', function(d) {
+          barTooltip.style("visibility", "hidden");
+      });
+
 }
 
 function drawStateChart(dailyData) {

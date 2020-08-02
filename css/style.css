@@ -1,24 +1,13 @@
-#wrapper {
-    width : 100%;
-    margin: 0;
-}
-
 svg {
 
 }
 
 #mapBlock {
-    width: 50%;
-    padding-left: 2%;
-    margin: 0;
-    float: left;
+  padding-left: 2%;
 }
 
 #stateChartBlock {
-    width: 50%;
-    padding-left: 2%;
-    margin: 0;
-    float: left;
+  padding-left: 2%;
 }
 .states {
   stroke: chocolate;
@@ -47,13 +36,13 @@ div.tooltip {
 
 #currSelectedDate {
   -webkit-appearance: none;  /* Override default CSS styles */
-  width: 100%; /* Full-width */
+  width: 1000px; /* Full-width */
   height: 25px; /* Specified height */
   background: #d3d3d3; /* Grey background */
   outline: none; /* Remove outline */
   opacity: 0.7; /* Set transparency (for mouse-over effects on hover) */
   -webkit-transition: .2s; /* 0.2 seconds transition on hover */
-  transition: opacity .2s;
+transition: opacity .2s;
 }
 #currSelectedDate:hover {
   opacity: 1; /* Fully shown on mouse-over */
@@ -75,6 +64,9 @@ div.tooltip {
   font-size: 16pt;
 }
 
+#currState {
+  font-size: 16pt;
+}
 
 /*
   state char
