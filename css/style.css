@@ -11,7 +11,7 @@
   vertical-align: top;
   overflow: hidden;
 }
-.svg-content-responsive {
+.svg-content {
   display: inline-block;
   position: absolute;
   top: 10px;
@@ -24,18 +24,9 @@ svg .rect {
   stroke-width: 5px;
 }
 
-.vertical-center {
-  margin: 0;
-  position: absolute;
-  top: 5%;
-  left: 50%;
-  -ms-transform: translateY(0%);
-  transform: translateY(0%);
-}
-
 #mapBlock {
   display: inline-block;
-  width: 40%;
+  width: 50%;
   padding-left: 2%;
   /* border-style: dotted;
   border-color: orange; */
@@ -47,7 +38,7 @@ svg .rect {
 
 #stateChartBlock {
   display: inline-block;
-  width: 40%;
+  width: 50%;
   height: 100%;
   padding-left: 2%;
 }
