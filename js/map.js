@@ -160,8 +160,8 @@ var barTooltip = d3.select("body")
                   .style("opacity", 0);
 
 function drawOneStateChart(stateName, date, covidData) {
-  console.log(stateName);
-  console.log(date);
+  // console.log(stateName);
+  // console.log(date);
   var margin = ({top: 30, right: 30, bottom: 30, left: 30});
 
   var currDay = covidData.filter(d => d.State == stateName)
@@ -195,8 +195,8 @@ function drawOneStateChart(stateName, date, covidData) {
                   .range([margin.left, width - margin.right]);
   // console.log(xScale.bandwidth());
 
-  var yScale = d3.scaleLinear()
-                  .domain([minCase, maxCase])
+  var yScale = d3.scaleLog()
+                  .domain([0.9, maxCase])
                   .range([height, 0]);
   xScale.domain(currDay.map(function(d) { return d.county; }));
   var xAxis = svg.append("g")
@@ -209,13 +209,14 @@ function drawOneStateChart(stateName, date, covidData) {
                   .call(d3.axisLeft(yScale).ticks(10, "~s"));
 
   var barChart = svg.selectAll("bar")
-      .data(currDay)
-      .enter().append("rect")
-      .style("fill", "steelblue")
-      .attr("x", function(d) { return xScale(d.county); })
-      .attr("width", xScale.bandwidth())
-      .attr("y", function(d) { return yScale(0); })
-      .attr("height", function(d) { return height - yScale(0); })
+                      .data(currDay)
+                      .enter().append("rect")
+                      .style("fill", "orange")
+                      .style("stroke", "black")
+                      .attr("x", function(d) { return xScale(d.county); })
+                      .attr("width", xScale.bandwidth())
+                      .attr("y", function(d) { return yScale(0.9); })
+                      .attr("height", function(d) { return height - yScale(0.9); })
 
   barChart.append("text")
           .text("test");
@@ -279,6 +280,21 @@ function drawStateChart(dailyData) {
   //         .attr("width", width - margin.right )
   //         .attr("height", height )
   //         .attr("x", margin.left);
+
+  // add an annotation on data point
+  stateChartSVG.append("line")
+                .attr("x1", xScale(new Date("2/20/2020")))
+                .attr("y1", yScale(16))
+                .attr("x2", xScale(new Date("3/30/2020")))
+                .attr("y2", yScale(16))
+                .attr("stroke", "grey")
+                .attr("stroke-dasharray", "4");
+
+  stateChartSVG.append("text")
+                .attr("x", xScale(new Date("3/15/2020")))
+                .attr("y", yScale(18))
+                .text("2/28/2020 - started to surge")
+                .style("font-size", "16px");
 
   function transition(path) {
           path.transition()

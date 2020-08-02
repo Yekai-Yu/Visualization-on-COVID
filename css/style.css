@@ -37,6 +37,8 @@ svg .rect {
   display: inline-block;
   width: 40%;
   padding-left: 2%;
+  /* border-style: dotted;
+  border-color: orange; */
 }
 
 #map {
