@@ -281,20 +281,57 @@ function drawStateChart(dailyData) {
   //         .attr("height", height )
   //         .attr("x", margin.left);
 
+  // add title to chart
+  stateChartSVG.append("text")
+                .attr("x", width / 2)
+                .attr("y", margin.top)
+                .text("COVID-19 confirmed case growth trend")
+                .style("font-size", "20px");
+  stateChartSVG.append("text")
+                .attr("x", width / 2)
+                .attr("y", margin.top * 2)
+                .text("[1/22/2020, 7/22/2020]")
+                .style("font-size", "14px");
   // add an annotation on data point
   stateChartSVG.append("line")
-                .attr("x1", xScale(new Date("2/20/2020")))
+                .attr("x1", xScale(new Date("2/25/2020")))
                 .attr("y1", yScale(16))
-                .attr("x2", xScale(new Date("3/30/2020")))
+                .attr("x2", xScale(new Date("3/25/2020")))
                 .attr("y2", yScale(16))
                 .attr("stroke", "grey")
                 .attr("stroke-dasharray", "4");
-
+    stateChartSVG.append("line")
+                  .attr("x1", xScale(new Date("2/28/2020")) + margin.left)
+                  .attr("y1", yScale(16))
+                  .attr("x2", xScale(new Date("2/28/2020")) + margin.left)
+                  .attr("y2", yScale(1))
+                  .attr("stroke", "grey")
+                  .attr("stroke-dasharray", "4");
   stateChartSVG.append("text")
                 .attr("x", xScale(new Date("3/15/2020")))
                 .attr("y", yScale(18))
                 .text("2/28/2020 - started to surge")
                 .style("font-size", "16px");
+
+    stateChartSVG.append("line")
+                  .attr("x1", xScale(new Date("7/1/2020")))
+                  .attr("y1", yScale(3956688))
+                  .attr("x2", xScale(new Date("7/22/2020")) + 50)
+                  .attr("y2", yScale(3956688))
+                  .attr("stroke", "grey")
+                  .attr("stroke-dasharray", "4");
+  stateChartSVG.append("line")
+                .attr("x1", xScale(new Date("7/22/2020")) + margin.left)
+                .attr("y1", yScale(3956688))
+                .attr("x2", xScale(new Date("7/22/2020")) + margin.left)
+                .attr("y2", yScale(1))
+                .attr("stroke", "grey")
+                .attr("stroke-dasharray", "4");
+    stateChartSVG.append("text")
+                  .attr("x", xScale(new Date("6/15/2020")))
+                  .attr("y", yScale(3956688) - 10)
+                  .text("7/22/2020 - 3,956,688 cases")
+                  .style("font-size", "16px");
 
   function transition(path) {
           path.transition()
